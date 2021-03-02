@@ -287,26 +287,23 @@ describe('App', () => {
         ],
       });
 
-    const response = await request(app).get(
-      `/orders/${order.body.customer.id}`,
-    );
+    const response = await request(app).get(`/orders/${order.body.id}`);
 
-    expect(response.body).toBe(
-      '',
-      // expect.objectContaining({
-      //   customer: expect.objectContaining({
-      //     id: customer.body.id,
-      //     name: 'Rocketseat',
-      //     email: 'oi@rocketseat.com.br',
-      //   }),
-      //   order_products: expect.arrayContaining([
-      //     expect.objectContaining({
-      //       product_id: product.body.id,
-      //       price: '500.00',
-      //       quantity: 5,
-      //     }),
-      //   ]),
-      // }),
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        customer: expect.objectContaining({
+          id: customer.body.id,
+          name: 'Rocketseat',
+          email: 'oi@rocketseat.com.br',
+        }),
+        order_products: expect.arrayContaining([
+          expect.objectContaining({
+            product_id: product.body.id,
+            price: '500.00',
+            quantity: 5,
+          }),
+        ]),
+      }),
     );
   });
 });

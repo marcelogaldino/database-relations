@@ -22,10 +22,8 @@ class CreateOrderService {
   constructor(
     @inject('OrdersRepository')
     private ordersRepository: IOrdersRepository,
-
     @inject('ProductsRepository')
     private productsRepository: IProductsRepository,
-
     @inject('CustomersRepository')
     private customersRepository: ICustomersRepository,
   ) {}
@@ -42,7 +40,7 @@ class CreateOrderService {
     );
 
     if (!existentProducts.length) {
-      throw new AppError('Could not find any products with the given ids');
+      throw new AppError('Colud not find any products with the given ids');
     }
 
     const existentProductsIds = existentProducts.map(product => product.id);
@@ -50,10 +48,9 @@ class CreateOrderService {
     const checkInexistentProducts = products.filter(
       product => !existentProductsIds.includes(product.id),
     );
-
     if (checkInexistentProducts.length) {
       throw new AppError(
-        `Could not find product ${checkInexistentProducts[0].id}`,
+        `could not find product ${checkInexistentProducts[0].id}`,
       );
     }
 
@@ -65,7 +62,7 @@ class CreateOrderService {
 
     if (findProductsWithNoQuantityAvailable.length) {
       throw new AppError(
-        `The quantity ${findProductsWithNoQuantityAvailable} is not available for ${findProductsWithNoQuantityAvailable[0].id}`,
+        `The quantity ${findProductsWithNoQuantityAvailable[0].quantity} is not available for ${findProductsWithNoQuantityAvailable[0].id}`,
       );
     }
 
@@ -80,15 +77,15 @@ class CreateOrderService {
       products: serializedProducts,
     });
 
-    const orderedProductsQuantity = products.map(product => ({
-      id: product.id,
+    const { order_products } = order;
+    const orderedProductsQuantity = order_products.map(product => ({
+      id: product.product_id,
       quantity:
-        existentProducts.filter(p => p.id === product.id)[0].quantity -
+        existentProducts.filter(p => p.id === product.product_id)[0].quantity -
         product.quantity,
     }));
 
     await this.productsRepository.updateQuantity(orderedProductsQuantity);
-
     return order;
   }
 }
